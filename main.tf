@@ -60,8 +60,8 @@ resource "aws_default_security_group" "default-security-group" {
   }
 
   ingress {
-    from_port = 8080
-    to_port = 8080
+    from_port = 80
+    to_port = 80
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -121,4 +121,13 @@ resource "aws_instance" "myapp-server" {
   tags = {
     Name = "${var.env_prefix}-server"
   }
+
+  user_data = <<EOF
+                 #!/bin/bash
+                 sudo yum update -y && sudo yum install -y docker
+                 sudo systemctl start docker
+                 sudo usermod -aG docker ec2-user
+                 docker run -p 80:80 nginx
+              EOF
+
 }

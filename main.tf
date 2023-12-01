@@ -122,12 +122,6 @@ resource "aws_instance" "myapp-server" {
     Name = "${var.env_prefix}-server"
   }
 
-  user_data = <<EOF
-                 #!/bin/bash
-                 sudo yum update -y && sudo yum install -y docker
-                 sudo systemctl start docker
-                 sudo usermod -aG docker ec2-user
-                 docker run -p 80:80 nginx
-              EOF
+  user_data = file("entry-script.sh")
 
 }
